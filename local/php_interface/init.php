@@ -53,3 +53,19 @@ class FeedBack
         }
     }
 }
+
+AddEventHandler("main", "OnBuildGlobalMenu", "RemoveExtraButtons");
+
+function RemoveExtraButtons(&$aGlobalMenu, &$aModuleMenu) {
+    if (CSite::InGroup(array(5))) {
+        unset(
+            $aGlobalMenu['global_menu_desktop'],
+            $aGlobalMenu['global_menu_services'],
+            $aGlobalMenu['global_menu_marketplace'],
+            $aGlobalMenu['global_menu_marketing'],
+            $aGlobalMenu['global_menu_store'],
+            $aGlobalMenu['global_menu_statistics'],
+            $aGlobalMenu['global_menu_settings']
+        );
+    }
+}
