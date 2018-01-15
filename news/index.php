@@ -86,7 +86,7 @@ $APPLICATION->SetTitle("Новости");
 		"DISPLAY_PREVIEW_TEXT" => "Y",
 		"USE_SPECIAL_DATE" => "Y",
 		"USE_SHARE" => "N",
-		"CANONICAL_ID" => "",
+		"CANONICAL_ID" => "5",
 		"DETAIL_SET_CANONICAL_URL" => "N",
 		"PAGER_BASE_LINK_ENABLE" => "N",
 		"SHOW_404" => "N",

@@ -9,6 +9,8 @@ IncludeTemplateLangFile(__FILE__);
 <?$APPLICATION->ShowHead();?>
 <link href="<?=SITE_TEMPLATE_PATH?>/common.css" type="text/css" rel="stylesheet" />
 <link href="<?=SITE_TEMPLATE_PATH?>/colors.css" type="text/css" rel="stylesheet" />
+
+<? $APPLICATION->ShowProperty('canonical') ?>
 <meta property= "specialdate" content="<? $APPLICATION->ShowProperty('specialdate') ?>">
 
 	<!--[if lte IE 6]>
