@@ -69,3 +69,29 @@ function RemoveExtraButtons(&$aGlobalMenu, &$aModuleMenu) {
         );
     }
 }
+
+AddEventHandler("main", "OnEpilog", "SuperSEOTool");
+
+function SuperSEOTool(){
+    global $APPLICATION;
+
+    if (!CModule::IncludeModule('iblock')) {
+        return;
+    }
+
+    $rsMeta = CIBlockElement::GetList(
+        array(),
+        array(
+            'IBLOCK_ID' => 6,
+            'NAME' => $APPLICATION->GetCurDir(),
+        ),
+        false,
+        false,
+        array('NAME', 'PROPERTY_TITLE', 'PROPERTY_DESCRIPTION')
+    );
+
+    if ($arr = $rsMeta->Fetch()) {
+        $APPLICATION->SetPageProperty('title', $arr['PROPERTY_TITLE_VALUE']);
+        $APPLICATION->SetPageProperty('description', $arr['PROPERTY_DESCRIPTION_VALUE']);
+    }
+}
