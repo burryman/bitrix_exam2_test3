@@ -24,3 +24,32 @@ function CheckViewsCounterBeforeDeactivate(&$arFields)
         }
     }
 }
+
+
+AddEventHandler("main", "OnBeforeEventAdd", array("FeedBack", "OnBeforeFeedBackSend"));
+
+class FeedBack
+{
+    function OnBeforeFeedBackSend(&$event, &$lid, &$arFields)
+    {
+        global $USER;
+
+        if ($event == "FEEDBACK_FORM") {
+            if ($USER->IsAuthorized()) {
+                $curUser = CUser::GetByID(CUser::GetID())->GetNext();
+                $arFields['AUTHOR'] = "«Пользователь авторизован: " . $curUser['ID'] .
+                    "(" . $curUser['LOGIN'] . ")" . $curUser['NAME'] .
+                    ", данные из формы: " . $arFields['AUTHOR'];
+            } else {
+                $arFields['AUTHOR'] = "Пользователь не авторизован, данные из формы: " . $arFields['AUTHOR'];
+            }
+            CEventLog::Add(array(
+                "SEVERITY" => "SECURITY",
+                "AUDIT_TYPE_ID" => "FEEDBACK",
+                "MODULE_ID" => "main",
+                "ITEM_ID" => $lid,
+                "DESCRIPTION" => "Замена данных в отсылаемом письме – " . $arFields['AUTHOR'],
+            ));
+        }
+    }
+}
