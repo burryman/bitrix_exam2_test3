@@ -2,7 +2,10 @@
 use Bitrix\Main\Loader;
 
 global $APPLICATION;
-$e = new CAdminException();
+
+if (!Loader::includeModule('iblock')) {
+    return;
+}
 
 if (intval($arParams['CATALOG_IBLOCK_ID']) > 0) {
     $arParams['CATALOG_IBLOCK_ID'] = intval($arParams['CATALOG_IBLOCK_ID']);
@@ -24,10 +27,6 @@ if (count($arResult['ERRORS']) > 0) {
     foreach ($arResult['ERRORS'] as $error) {
         echo $error . '<br>';
     }
-    return false;
-}
-
-if (!Loader::includeModule('iblock')) {
     return;
 }
 
@@ -60,6 +59,10 @@ if ($this->StartResultCache(false)) {
         }
     }
 
+    $this->setResultCacheKeys(array(
+        'COMPANIES',
+        'COUNT'
+    ));
     $this->IncludeComponentTemplate();
 }
 

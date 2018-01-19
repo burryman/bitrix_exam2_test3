@@ -1,23 +1,30 @@
 <? if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 use Bitrix\Main\Loader;
 
-if (isset($arParams['CATALOG_IBLOCK_ID'])) {
-    $arParams['CATALOG_IBLOCK_ID'] = intval($arParams['CATALOG_IBLOCK_ID']);
-} else {
-    $arParams['CATALOG_IBLOCK_ID'] =  2;
+if (!Loader::includeModule('iblock')) {
+    return;
 }
 
-if (isset($arParams['ALT_IBLOCK_ID'])) {
+if (intval($arParams['CATALOG_IBLOCK_ID']) > 0) {
+    $arParams['CATALOG_IBLOCK_ID'] = intval($arParams['CATALOG_IBLOCK_ID']);
+} else {
+    $arResult['ERRORS'][] = 'Укажите ID инфоблока каталога';
+}
+
+if (intval($arParams['ALT_IBLOCK_ID']) > 0) {
     $arParams['ALT_IBLOCK_ID'] = intval($arParams['ALT_IBLOCK_ID']);
 } else {
-    $arParams['ALT_IBLOCK_ID'] = 1;
+    $arResult['ERRORS'][] = 'Укажите ID инфоблока - альтернативного классификатора';
 }
 
 if (! isset($arParams['PROPERTY_CODE'])) {
-    $arParams['PROPERTY_CODE'] = "UF_NEWS_LINK";
+    $arResult['ERRORS'][] = 'Укажите код свойства';
 }
 
-if (!Loader::includeModule('iblock')) {
+if (count($arResult['ERRORS']) > 0) {
+    foreach ($arResult['ERRORS'] as $error) {
+        echo $error . '<br>';
+    }
     return;
 }
 
@@ -69,6 +76,10 @@ if ($this->StartResultCache(false)) {
         }
     }
 
+    $this->setResultCacheKeys(array(
+        'NEWS',
+        'COUNT'
+    ));
     $this->IncludeComponentTemplate();
 }
 

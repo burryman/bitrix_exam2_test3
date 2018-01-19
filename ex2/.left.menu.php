@@ -1,7 +1,7 @@
 <?
 $aMenuLinks = Array(
 	Array(
-		"Обратная связть", 
+		"Обратная связь", 
 		"feedback/", 
 		Array(), 
 		Array(), 
@@ -17,6 +17,13 @@ $aMenuLinks = Array(
 	Array(
 		"Простой компонент 2", 
 		"simplecomp2/", 
+		Array(), 
+		Array(), 
+		"" 
+	),
+	Array(
+		"Простой компонент 3", 
+		"simplecomp3/", 
 		Array(), 
 		Array(), 
 		"" 
