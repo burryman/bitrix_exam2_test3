@@ -23,6 +23,10 @@ if (!isset($arParams['PROPERTY_CODE'])) {
     $arResult['ERRORS'][] = 'Укажите код свойства';
 }
 
+if ( isset($_GET["F"]) ) {
+    $arParams['CACHE_TIME'] = 0;
+}
+
 if (count($arResult['ERRORS']) > 0) {
     foreach ($arResult['ERRORS'] as $error) {
         echo $error . '<br>';
@@ -45,20 +49,43 @@ if ($this->StartResultCache(false)) {
         $arResult['COMPANIES'][$arr['ID']] = $arr;
     }
 
+    $arElementFilter = array(
+        "IBLOCK_ID" => $arParams['CATALOG_IBLOCK_ID'],
+        'PROPERTY_' . $arParams['PROPERTY_CODE'] => array_keys($arResult['COMPANIES'])
+    );
+
+    if (isset($_GET['F'])) {
+    $arElementFilter[] = array(
+            'LOGIC' => 'OR',
+            [
+                '<= PROPERTY_PRICE' => 1700,
+                'PROPERTY_MATERIAL' => 'Дерево, ткань',
+            ],
+
+            [
+                '< PROPERTY_PRICE' => 1500,
+                'PROPERTY_MATERIAL' => 'Металл, пластик'
+            ]
+        );
+    }
+
+    $arElementSelect = array(
+        'ID',
+        'NAME',
+        'CODE',
+        'IBLOCK_SECTION_ID',
+        'PROPERTY_PRICE',
+        'PROPERTY_MATERIAL',
+        'PROPERTY_ARTNUMBER',
+        'PROPERTY_' . $arParams['PROPERTY_CODE']
+    );
+
     $rsElement = CIBlockElement::GetList(
         array('by1' => 'name', 'by2' => 'sort'),
-        array("IBLOCK_ID" => $arParams['CATALOG_IBLOCK_ID'], 'PROPERTY_' . $arParams['PROPERTY_CODE'] => array_keys($arResult['COMPANIES'])),
+        $arElementFilter,
         false,
         false,
-        array(
-            'ID',
-            'NAME',
-            'CODE',
-            'IBLOCK_SECTION_ID',
-            'PROPERTY_PRICE',
-            'PROPERTY_MATERIAL',
-            'PROPERTY_ARTNUMBER',
-            'PROPERTY_' . $arParams['PROPERTY_CODE'])
+        $arElementSelect
     );
 
     while ($arr = $rsElement->GetNext()) {
