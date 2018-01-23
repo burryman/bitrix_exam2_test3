@@ -12,7 +12,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
             $item['PROPERTY_MATERIAL_VALUE'],
             )
         ) ?>
-        <li><?= $item['NAME'] . ' - ' . $itemProps ?></li>
+        <li><?= $item['NAME'] . ' - ' . $itemProps . ' (' . $item['DETAIL_PAGE_URL'] . ')' ?></li>
     <? endforeach ?>
     </ul>
 <? endforeach ?>

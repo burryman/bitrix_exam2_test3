@@ -25,9 +25,9 @@ $arComponentParameters = array(
             "TYPE" => "STRING",
             "REFRESH" => "Y",
         ),
-        "DETAIL_URL" => array(
+        "DETAIL_PAGE_TEMPLATE" => array(
             "PARENT" => "BASE",
-            "NAME" => "Ссылка на детальную страницу товара",
+            "NAME" => "Шаблон ссылки на детальную страницу",
             "TYPE" => "STRING",
             "REFRESH" => "Y",
         ),

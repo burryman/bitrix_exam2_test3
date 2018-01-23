@@ -46,16 +46,32 @@ if ($this->StartResultCache(false)) {
     }
 
     $rsElement = CIBlockElement::GetList(
-        array(),
+        array('by1' => 'name', 'by2' => 'sort'),
         array("IBLOCK_ID" => $arParams['CATALOG_IBLOCK_ID'], 'PROPERTY_' . $arParams['PROPERTY_CODE'] => array_keys($arResult['COMPANIES'])),
         false,
         false,
-        array('ID', 'NAME', 'IBLOCK_SECTION_ID', 'PROPERTY_PRICE', 'PROPERTY_MATERIAL', 'PROPERTY_ARTNUMBER', 'PROPERTY_' . $arParams['PROPERTY_CODE'])
+        array(
+            'ID',
+            'NAME',
+            'CODE',
+            'IBLOCK_SECTION_ID',
+            'PROPERTY_PRICE',
+            'PROPERTY_MATERIAL',
+            'PROPERTY_ARTNUMBER',
+            'PROPERTY_' . $arParams['PROPERTY_CODE'])
     );
 
     while ($arr = $rsElement->GetNext()) {
         foreach ($arr['PROPERTY_' . $arParams['PROPERTY_CODE'] . '_VALUE'] as $companyID) {
             $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']] = $arr;
+
+            $detailPageURL = str_replace(
+                array('#SECTION_ID#', '#ELEMENT_CODE#'),
+                array($arr['IBLOCK_SECTION_ID'], $arr['CODE']),
+                $arParams['DETAIL_PAGE_TEMPLATE']
+            ) . '.php';
+
+            $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']]['DETAIL_PAGE_URL'] =  $detailPageURL;
         }
     }
 
