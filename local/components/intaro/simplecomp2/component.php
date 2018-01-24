@@ -99,6 +99,15 @@ if ($this->StartResultCache(false)) {
             ) . '.php';
 
             $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']]['DETAIL_PAGE_URL'] =  $detailPageURL;
+
+            $arButtons = CIBlock::GetPanelButtons(
+                $arr["IBLOCK_ID"],
+                $arr["ID"],
+                0,
+                array("SECTION_BUTTONS"=>false, "SESSID"=>false)
+            );
+            $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']]["EDIT_LINK"] = $arButtons["edit"]["edit_element"]["ACTION_URL"];
+            $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']]["DELETE_LINK"] = $arButtons["edit"]["delete_element"]["ACTION_URL"];
         }
     }
 
