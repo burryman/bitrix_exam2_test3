@@ -111,6 +111,24 @@ if ($this->StartResultCache(false)) {
         }
     }
 
+    $iblockURL = "/bitrix/admin/iblock_section_admin.php?IBLOCK_ID=" . $arParams['CATALOG_IBLOCK_ID'] . "&type=products";
+
+    if ($APPLICATION->GetShowIncludeAreas())
+    {
+        $this->AddIncludeAreaIcons(
+            Array(
+                Array(
+                    "ID" => "ADMIN_IBLOCK_BTN",
+                    "TITLE" => "ИБ в админке",
+                    "URL" => $iblockURL, //или javascript:MyJSFunction ()
+                    "ICON" => "menu-delete", //CSS-класс с иконкой
+                    "IN_PARAMS_MENU" => true, //показать в контекстном меню
+                    "IN_MENU" => false //показать в подменю компонента
+                )
+            )
+        );
+    }
+
     $this->setResultCacheKeys(array(
         'COMPANIES',
         'COUNT'
