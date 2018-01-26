@@ -88,7 +88,19 @@ if ($this->StartResultCache(false)) {
         $arElementSelect
     );
 
+    $minPrice = 0;
+    $maxPrice = 0;
+
     while ($arr = $rsElement->GetNext()) {
+        $price = intval($arr['PROPERTY_PRICE_VALUE']);
+
+        if ($price > $maxPrice) {
+            $maxPrice = $price;
+        }
+        if (($price < $minPrice) || $minPrice == 0) {
+            $minPrice = $price;
+        }
+
         foreach ($arr['PROPERTY_' . $arParams['PROPERTY_CODE'] . '_VALUE'] as $companyID) {
             $arResult['COMPANIES'][$companyID]['ITEMS'][$arr['ID']] = $arr;
 
@@ -111,6 +123,9 @@ if ($this->StartResultCache(false)) {
         }
     }
 
+    $arResult['MAX_PRICE'] = $maxPrice;
+    $arResult['MIN_PRICE'] = $minPrice;
+
     $iblockURL = "/bitrix/admin/iblock_section_admin.php?IBLOCK_ID=" . $arParams['CATALOG_IBLOCK_ID'] . "&type=products";
 
     if ($APPLICATION->GetShowIncludeAreas())
@@ -131,7 +146,9 @@ if ($this->StartResultCache(false)) {
 
     $this->setResultCacheKeys(array(
         'COMPANIES',
-        'COUNT'
+        'COUNT',
+        'MAX_PRICE',
+        'MIN_PRICE'
     ));
     $this->IncludeComponentTemplate();
 }

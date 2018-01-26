@@ -27,3 +27,10 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
     </ul>
 <? endforeach ?>
 </ul>
+
+<? $this->SetViewTarget('exam') ?>
+    <div style="color:red; margin: 34px 15px 35px 15px">
+        <?= 'Максимальная цена: ' . $arResult['MAX_PRICE'] ?> <br>
+        <?= 'Минимальная цена: ' . $arResult['MIN_PRICE'] ?>
+    </div>
+<? $this->EndViewTarget('exam') ?>
