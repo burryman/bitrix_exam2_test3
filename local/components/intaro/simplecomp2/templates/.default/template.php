@@ -1,6 +1,9 @@
 <?
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
 
+<?echo time();?>
+<br>
+
 Фильтр: <a href="<?= $APPLICATION->GetCurDir() . '?F=Y' ?>"><?= $APPLICATION->GetCurDir() . '?F=Y' ?></a>
 
 <br>
@@ -34,3 +37,15 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();?>
         <?= 'Минимальная цена: ' . $arResult['MIN_PRICE'] ?>
     </div>
 <? $this->EndViewTarget('exam') ?>
+
+<?
+    $APPLICATION->IncludeComponent(
+       "bitrix:main.pagenavigation",
+       "",
+       array(
+          "NAV_OBJECT" => $arResult['NAV_STRING'],
+          "SEF_MODE" => "N",
+       ),
+       $component
+    );
+?>

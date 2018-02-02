@@ -29,48 +29,59 @@ if (count($arResult['ERRORS']) > 0) {
 }
 
 if ($this->StartResultCache(false)) {
-    $rsNews = CIBlockElement::GetList(
-        array(),
-        array('IBLOCK_ID' => $arParams['ALT_IBLOCK_ID']),
-        false,
-        false,
-        array('ID', 'NAME', 'ACTIVE_FROM')
-    );
-
-    while ($arr = $rsNews->GetNext()) {
-        $arResult['NEWS'][$arr['ID']] = $arr;
-    }
-
-    $rsElement = CIBlockElement::GetList(
-        array(),
-        array("IBLOCK_ID" => $arParams['CATALOG_IBLOCK_ID']),
-        false,
-        false,
-        array('ID', 'NAME', 'IBLOCK_SECTION_ID', 'PROPERTY_PRICE', 'PROPERTY_MATERIAL', 'PROPERTY_ARTNUMBER', $arParams['PROPERTY_CODE'])
-    );
-
-    $arResult['COUNT'] = $rsElement -> SelectedRowsCount();
-
-    $arElement = array();
-    while ($arr = $rsElement->GetNext()) {
-        $arElement[$arr['ID']] = $arr;
-    }
-
     $rsSection = CIBlockSection::GetList(
         array(),
-        array('IBLOCK_ID' => $arParams['CATALOG_IBLOCK_ID']),
+        array('IBLOCK_ID' => $arParams['CATALOG_IBLOCK_ID'], '!' . $arParams['PROPERTY_CODE'] => false),
         false,
         array('ID', 'NAME', $arParams['PROPERTY_CODE']),
         false
     );
 
-    while ($arr = $rsSection->GetNext()) {
-        foreach ($arr[$arParams['PROPERTY_CODE']] as $news_id) {
-            $arResult['NEWS'][$news_id]['SECTIONS'][$arr['ID']] = $arr;
+    $arNews = array();
 
-            foreach ($arElement as $el) {
-                if ($el['IBLOCK_SECTION_ID'] == $arr['ID']) {
-                    $arResult['NEWS'][$news_id]['SECTIONS'][$arr['ID']]['ITEMS'][$el['ID']] = $el;
+    while ($arr = $rsSection->GetNext()) {
+        $arSection[$arr['ID']] = $arr;
+        $arNews = array_merge($arNews, $arr[$arParams['PROPERTY_CODE']]);
+    }
+
+    $arNews = array_unique($arNews);
+
+    if (count($arNews) > 0 && count($arSection) > 0) {
+        $rsNews = CIBlockElement::GetList(
+            array(),
+            array('IBLOCK_ID' => $arParams['ALT_IBLOCK_ID'], 'ID' => $arNews),
+            false,
+            false,
+            array('ID', 'NAME', 'ACTIVE_FROM')
+        );
+
+        while ($arr = $rsNews->GetNext()) {
+            $arResult['NEWS'][$arr['ID']] = $arr;
+        }
+
+        $rsElement = CIBlockElement::GetList(
+            array(),
+            array("IBLOCK_ID" => $arParams['CATALOG_IBLOCK_ID'], 'IBLOCK_SECTION_ID' => array_keys($arSection)),
+            false,
+            false,
+            array('ID', 'NAME', 'IBLOCK_SECTION_ID', 'PROPERTY_PRICE', 'PROPERTY_MATERIAL', 'PROPERTY_ARTNUMBER', $arParams['PROPERTY_CODE'])
+        );
+
+        $arResult['COUNT'] = $rsElement -> SelectedRowsCount();
+
+        $arElement = array();
+        while ($arr = $rsElement->GetNext()) {
+            $arElement[$arr['ID']] = $arr;
+        }
+
+        foreach ($arSection as $arr) {
+            foreach ($arr[$arParams['PROPERTY_CODE']] as $news_id) {
+                $arResult['NEWS'][$news_id]['SECTIONS'][$arr['ID']] = $arr;
+
+                foreach ($arElement as $el) {
+                    if ($el['IBLOCK_SECTION_ID'] == $arr['ID']) {
+                        $arResult['NEWS'][$news_id]['SECTIONS'][$arr['ID']]['ITEMS'][$el['ID']] = $el;
+                    }
                 }
             }
         }

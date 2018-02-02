@@ -43,7 +43,7 @@ if ($this->StartResultCache(false)) {
         $by=false,
         $order=false,
         array('ID' => $USER->GetID()),
-        array('SELECT' => array('ID', 'LOGIN', $arParams['USER_PROPERTY_CODE']), 'FIELDS' => array('ID', 'LOGIN', $arParams['USER_PROPERTY_CODE']))
+        array('SELECT' => array($arParams['USER_PROPERTY_CODE']), 'FIELDS' => array('ID', 'LOGIN', $arParams['USER_PROPERTY_CODE']))
     )->Fetch();
 
     $rsUsers = $USER->GetList(
@@ -62,6 +62,7 @@ if ($this->StartResultCache(false)) {
         array(
             'IBLOCK_ID' => $arParams['NEWS_IBLOCK_ID'],
             'PROPERTY_' . $arParams['AUTHOR_PROPERTY_CODE'] => array_keys($arResult['USERS']),
+            '!PROPERTY_' . $arParams['AUTHOR_PROPERTY_CODE'] => array(intval($arCurUser['ID'])),
         ),
         false,
         false,
@@ -71,9 +72,9 @@ if ($this->StartResultCache(false)) {
     $arResult['COUNT'] = $rsNews->SelectedRowsCount();
 
     while ($arr = $rsNews->GetNext()) {
-        if(in_array($arCurUser['ID'], $arr['PROPERTY_' . $arParams['AUTHOR_PROPERTY_CODE'] . '_VALUE']) == false) {
+        if (in_array($arCurUser['ID'], $arr['PROPERTY_' . $arParams['AUTHOR_PROPERTY_CODE'] . '_VALUE']) == false) {
             foreach ($arr['PROPERTY_' . $arParams['AUTHOR_PROPERTY_CODE'] . '_VALUE'] as $authorID) {
-                if (in_array($authorID, array_keys($arResult['USERS']))) {
+                if (in_array($authorID, array_keys($arResult['USERS'])) ) {
                     $arResult['USERS'][$authorID]['ITEMS'][$arr['ID']] = $arr;
                 }
             }
