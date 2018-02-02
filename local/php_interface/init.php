@@ -1,11 +1,16 @@
 <?
+define(PRODUCTS_IBLOCK_ID, 2);
+define(META_IBLOCK_ID, 6);
+define(MANAGER_GROUP_ID, 5);
+define(SERVICES_IBLOCK_ID, 3);
+
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", "CheckViewsCounterBeforeDeactivate");
 
 function CheckViewsCounterBeforeDeactivate(&$arFields)
 {
     global $APPLICATION;
 
-    if ($arFields['ACTIVE'] == "N") {
+    if ($arFields['ACTIVE'] == "N" && $arFields['IBLOCK_ID'] == PRODUCTS_IBLOCK_ID) {
         $arElement = CIBlockElement::GetList(
             array(),
             array(
@@ -22,6 +27,14 @@ function CheckViewsCounterBeforeDeactivate(&$arFields)
                 $arElement['SHOW_COUNTER'] . " просмотров");
             return false;
         }
+    }
+}
+
+AddEventHandler("iblock", "OnAfterIBlockElementUpdate", Array("ElementUpdateHandler", "clearSimpleComp3Cache"));
+
+function clearSimpleComp3Cache(&$arFields) {
+    if (intval($arFields['IBLOCK_ID']) == SERVICES_IBLOCK_ID) {
+        BXClearCache(true, "/s1/intaro/simplecomp2/");
     }
 }
 
@@ -57,16 +70,11 @@ class FeedBack
 AddEventHandler("main", "OnBuildGlobalMenu", "RemoveExtraButtons");
 
 function RemoveExtraButtons(&$aGlobalMenu, &$aModuleMenu) {
-    if (CSite::InGroup(array(5))) {
+    if (CSite::InGroup(array(MANAGER_GROUP_ID))) {
         unset(
-            $aGlobalMenu['global_menu_desktop'],
-            $aGlobalMenu['global_menu_services'],
-            $aGlobalMenu['global_menu_marketplace'],
-            $aGlobalMenu['global_menu_marketing'],
-            $aGlobalMenu['global_menu_store'],
-            $aGlobalMenu['global_menu_statistics'],
-            $aGlobalMenu['global_menu_settings']
+            $aGlobalMenu['global_menu_desktop']
         );
+        $aModuleMenu = [$aModuleMenu[1]];
     }
 }
 
@@ -82,7 +90,7 @@ function SuperSEOTool(){
     $rsMeta = CIBlockElement::GetList(
         array(),
         array(
-            'IBLOCK_ID' => 6,
+            'IBLOCK_ID' => META_IBLOCK_ID,
             'NAME' => $APPLICATION->GetCurDir(),
         ),
         false,
